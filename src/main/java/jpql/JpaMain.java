@@ -31,8 +31,13 @@ public class JpaMain {
             em.clear();
 
             // inner join
-            String query = "select t from Member m left join m.team t on t.name = m.username";
-            List<Team> list = em.createQuery(query, Team.class)
+            String query = "select " +
+                    "case when m.age <= 10 then '학생' " +
+                    "   when m.age >= 60 then '노인' " +
+                    "   else '성인' " +
+                    "end " +
+                    "from Member m";
+            List<String> list = em.createQuery(query, String.class)
                     .getResultList();
             System.out.println("list size: " + list.size());
             list.forEach(System.out::println);
