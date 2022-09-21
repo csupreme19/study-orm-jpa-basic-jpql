@@ -4,6 +4,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class JpaMain {
@@ -26,17 +28,17 @@ public class JpaMain {
             member.changeTeam(team);
 
             Member member2 = new Member();
-            member.setUsername("member2");
-            member.setAge(12);
-            member.changeTeam(team);
+            member2.setUsername("member2");
+            member2.setAge(12);
 
             em.persist(member);
+            em.persist(member2);
 
             em.flush();
             em.clear();
 
-            String query = "select function('group_concat', m.username) from Member m";
-            List<String> list = em.createQuery(query, String.class)
+            String query = "select m from Team t join t.members m";
+            List<Member> list = em.createQuery(query, Member.class)
                     .getResultList();
             System.out.println("list size: " + list.size());
             list.forEach(System.out::println);
