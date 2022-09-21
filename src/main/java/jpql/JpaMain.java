@@ -16,38 +16,26 @@ public class JpaMain {
 
         try {
 
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
             Member member = new Member();
-            member.setUsername("member1");
+            member.setUsername("member");
             member.setAge(10);
+            member.changeTeam(team);
+
             em.persist(member);
 
             em.flush();
             em.clear();
 
-            // Query
-            List resultList = em.createQuery("select distinct m.username, m.age from Member m")
+            // inner join
+            String query = "select t from Member m left join m.team t on t.name = m.username";
+            List<Team> list = em.createQuery(query, Team.class)
                     .getResultList();
-            Object[] result = (Object[]) resultList.get(0);
-            for(Object o : result) {
-                System.out.println(o);
-            }
-
-            // TypedQuery
-            List<Object[]> resultList2 = em.createQuery("select distinct m.username, m.age from Member m")
-                    .getResultList();
-            for(Object[] result2 : resultList2) {
-                for(Object o : result2) {
-                    System.out.println(o);
-                }
-            }
-
-            // new로 조회
-            List<MemberDTO> resultList3 = em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class)
-                    .getResultList();
-            for (MemberDTO memberDTO : resultList3) {
-                System.out.println(memberDTO.getUsername());
-                System.out.println(memberDTO.getAge());
-            }
+            System.out.println("list size: " + list.size());
+            list.forEach(System.out::println);
 
             tx.commit();
         } catch (Exception e) {

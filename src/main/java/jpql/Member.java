@@ -3,6 +3,8 @@ package jpql;
 import javax.persistence.*;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 public class Member {
 
@@ -13,12 +15,21 @@ public class Member {
     private String username;
     private int age;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 
     @OneToMany(mappedBy = "member")
     private List<Order> orders;
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", age=" + age +
+                '}';
+    }
 
     public Long getId() {
         return id;
@@ -48,7 +59,8 @@ public class Member {
         return team;
     }
 
-    public void setTeam(Team team) {
+    public void changeTeam(Team team) {
+        team.getMembers().add(this);
         this.team = team;
     }
 
