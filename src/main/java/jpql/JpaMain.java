@@ -25,18 +25,17 @@ public class JpaMain {
             member.setAge(10);
             member.changeTeam(team);
 
+            Member member2 = new Member();
+            member.setUsername("member2");
+            member.setAge(12);
+            member.changeTeam(team);
+
             em.persist(member);
 
             em.flush();
             em.clear();
 
-            // inner join
-            String query = "select " +
-                    "case when m.age <= 10 then '학생' " +
-                    "   when m.age >= 60 then '노인' " +
-                    "   else '성인' " +
-                    "end " +
-                    "from Member m";
+            String query = "select function('group_concat', m.username) from Member m";
             List<String> list = em.createQuery(query, String.class)
                     .getResultList();
             System.out.println("list size: " + list.size());
